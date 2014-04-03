@@ -1,0 +1,4 @@
+CPAssistant
+===========
+
+Cantonese pronunciation assistant.
