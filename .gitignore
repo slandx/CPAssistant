@@ -1,0 +1,16 @@
+# Compiled source #
+###################
+*.pyc
+
+# Packages #
+############
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*(copy)
+
+# Other files #
+###############
+test.py
