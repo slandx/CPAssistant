@@ -21,4 +21,7 @@ optional arguments:
 
 
 ### Update
-* 2014-04-22(Tue): Start project. Add file **lyrics** for test. To be continued.
+* 2014-04-22(Tue): 
+  * Start project. 
+  * Add file **lyrics** for test. 
+  * To be continued.
