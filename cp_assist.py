@@ -9,9 +9,10 @@ import jieba
 from argparse import ArgumentParser
 import sqlite3 as lite
 import logging
+import chardet
 
 logging.basicConfig(filename = os.path.join(os.getcwd(), 'cpassistant.log'),
-    level = logging.DEBUG, filemode = 'a', 
+    level = logging.DEBUG, filemode = 'a',
     format = '%(asctime)s - %(levelname)s: %(message)s')
 
 def contains_chinese(check_str):
@@ -92,7 +93,7 @@ def mark_sentence(sentence):
     finally:
         if con:
             con.close()
-        
+
 
 def get_parser():
     parser = ArgumentParser(description='Convert Chinese to Cantonese.')
@@ -111,7 +112,9 @@ def main():
             fileObj = None
             try:
                 fileObj = open(options.file,'r')
-                mark_sentence(fileObj.read().decode('utf-8'))
+                f_content = fileObj.read()
+                enc_rst = chardet.detect(f_content)
+                mark_sentence(f_content.decode(enc_rst['encoding']))
             except Exception, e:
                 print e
             finally:
@@ -119,11 +122,13 @@ def main():
                     fileObj.close()
         elif options.str:
             # use string
-            mark_sentence(options.str.decode('utf-8'))
+            enc_rst = chardet.detect(options.str)
+            # print enc_rst
+            mark_sentence(options.str.decode(enc_rst['encoding']))
         else:
             parser.print_help()
 
 if __name__ == "__main__":
     main()
-    
+
 
