@@ -3,7 +3,7 @@ CPAssistant
 
 Cantonese pronunciation assistant.
 ### Usage
-```python
+```Batchfile
 python cp_assist.py [-h] [-v] [-f FILE] [-s STR]
 
 Convert Chinese to Cantonese.
@@ -16,11 +16,11 @@ optional arguments:
 ```
 
 ###Examples
-```python
+```Batchfile
 python cp_assist.py -s "大家好，我们来做一个注音测试"
 ```
 Or
-```python
+```Batchfile
 python cp_assist.py -f /file/path
 ```
 
