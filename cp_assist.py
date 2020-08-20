@@ -11,25 +11,29 @@ import sqlite3 as lite
 import logging
 import chardet
 
-logging.basicConfig(filename = os.path.join(os.getcwd(), 'cpassistant.log'),
-    level = logging.DEBUG, filemode = 'a',
-    format = '%(asctime)s - %(levelname)s: %(message)s')
+jieba.setLogLevel(logging.INFO)
+
+logging.basicConfig(filename=os.path.join(os.getcwd(), 'cpassistant.log'),
+                    level=logging.DEBUG, filemode='a',
+                    format='%(asctime)s - %(levelname)s: %(message)s')
+
 
 def contains_chinese(check_str):
     for ch in check_str:
-        if u'\u4e00' <= ch <= u'\u9fff':
+        if '\u4e00' <= ch <= '\u9fff':
             return True
         return False
+
 
 def output(zi_list, yin_list):
     out_zi_list = []
     out_yin_list = []
     output_list = []
-    for (idx,yin) in enumerate(yin_list):
+    for (idx, yin) in enumerate(yin_list):
         if contains_chinese(zi_list[idx]):
-            for (idx_y,each_y) in enumerate(yin.split()):
+            for (idx_y, each_y) in enumerate(yin.split()):
                 out_yin_list.append('['+each_y+']')
-                out_zi_list.append(' '*(len(each_y)/2)+zi_list[idx][idx_y]+' '*(len(each_y)-len(each_y)/2))
+                out_zi_list.append(' '*int(len(each_y)/2)+zi_list[idx][idx_y]+' '*(len(each_y)-int(len(each_y)/2)))
         else:
             out_yin_list.append(yin)
             out_zi_list.append(zi_list[idx])
@@ -44,10 +48,10 @@ def output(zi_list, yin_list):
         out_zi_list.append('\n')
         output_list.append(''.join(out_yin_list))
         output_list.append(''.join(out_zi_list))
-    print ''.join(output_list)
+    print(''.join(output_list))
 
 
-def get_jyutping(cur,phrase):
+def get_jyutping(cur, phrase):
     # Exact Match
     cur.execute("select YIN from DICT_CI where JIAN='"+phrase+"';")
     rst = cur.fetchone()
@@ -56,7 +60,7 @@ def get_jyutping(cur,phrase):
     else:
         # Matching separately
         logging.info("No result in DICT_CI: %s" % phrase)
-        if len(phrase)==1:
+        if len(phrase) == 1:
             cur.execute("select YIN from DICT_ZI where ZI='"+phrase+"';")
             rst = cur.fetchone()
             if rst:
@@ -68,6 +72,7 @@ def get_jyutping(cur,phrase):
             for word in phrase:
                 tmp.append(get_jyutping(cur, word))
             return ' '.join(tmp)
+
 
 def mark_sentence(sentence):
     # get db connection
@@ -87,8 +92,8 @@ def mark_sentence(sentence):
             else:
                 yin_list.append(phrase)
         # end for
-        output(zi_list,yin_list)
-    except Exception, e:
+        output(zi_list, yin_list)
+    except Exception as e:
         raise e
     finally:
         if con:
@@ -103,6 +108,7 @@ def get_parser():
     parser.add_argument('-s', '--str', help='chinese string', type=str)
     return parser
 
+
 def main():
     parser = get_parser()
     options = parser.parse_args()
@@ -111,24 +117,20 @@ def main():
             # use file
             fileObj = None
             try:
-                fileObj = open(options.file,'r')
+                fileObj = open(options.file, 'rb')
                 f_content = fileObj.read()
                 enc_rst = chardet.detect(f_content)
                 mark_sentence(f_content.decode(enc_rst['encoding']))
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
             finally:
                 if fileObj:
                     fileObj.close()
         elif options.str:
-            # use string
-            enc_rst = chardet.detect(options.str)
-            # print enc_rst
-            mark_sentence(options.str.decode(enc_rst['encoding']))
+            mark_sentence(options.str)
         else:
             parser.print_help()
 
+
 if __name__ == "__main__":
     main()
-
-
