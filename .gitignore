@@ -13,7 +13,8 @@
 
 # Other files #
 ###############
-test.py
-*.txt
 .vscode/
-*.pdf
+test.py
+output.txt
+example.txt
+example.pdf
